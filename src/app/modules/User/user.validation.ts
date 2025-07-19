@@ -1,14 +1,10 @@
-import z from "zod/v3";
-
+import z from 'zod';
 
 const registerUser = z.object({
   body: z.object({
-    name: z.string().min(2),
-    email: z.string().email(),
-    number: z
-      .string()
-      .regex(/^01[3-9]\d{8}$/, 'Invalid Bangladeshi phone number'),
-    password: z.string().min(6),
+    name: z.string().min(1, 'Name is required'),
+    email: z.string().email('Invalid email address'),
+    number: z.string().min(10, 'Number must be at least 10 characters'),
   }),
 });
 

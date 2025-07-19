@@ -5,15 +5,20 @@ import config from '../../config';
 
 const userSchema = new Schema<IUser>(
   {
-    name: { type: String, required: true, trim: true },
-    email: { type: String, required: true, unique: true, lowercase: true },
-    phone: { type: String, required: true, trim: true },
-    password: { type: String, required: true, select: 0 },
-    role: {
+    name: { type: String, required: [true, 'Name is required'] },
+    email: {
       type: String,
-      enum: ['user', 'admin'],
-      required: true,
+      required: [true, 'Email is required'],
+      unique: true,
     },
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    password: {
+      type: String,
+      required: [true, 'Password is required'],
+      minlength: [6, 'Password must be at least 6 characters long'],
+      select: 0,
+    },
+    phone: { type: String, required: [true, 'Phone is required'] },
     isBlocked: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
   },
