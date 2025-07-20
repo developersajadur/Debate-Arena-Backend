@@ -10,7 +10,7 @@ export interface IDebate {
   tags: string[];
   category: string;
   bannerUrl?: string;
-  duration: number; // in hours or minutes
+  duration: number;  // duration in hours
   createdBy: Types.ObjectId;
   status: TDebateStatus;
   endsAt?: Date;

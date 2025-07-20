@@ -3,11 +3,11 @@ import { IArgument } from "./argument.interface";
 
 const argumentSchema = new Schema<IArgument & Document>(
   {
-    user: { type: Schema.Types.ObjectId, ref: "User", required: [true, "User is required"] },
+    author: { type: Schema.Types.ObjectId, ref: "User", required: [true, "author is required"] },
     debate: { type: Schema.Types.ObjectId, ref: "Debate", required: [true, "Debate is required"] },
-    side: { type: String, enum: ["support", "oppose"], required: [true, "Side is required"] },
     content: { type: String, required: [true, "Content is required"] },
     voteCount: { type: Number, default: 0 },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

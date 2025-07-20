@@ -1,12 +1,19 @@
-import z from "zod";
+import z from 'zod';
 
 const createArgumentZodValidation = z.object({
-  user: z.string().min(1, "User ID is required"),
-  debate: z.string().min(1, "Debate ID is required"),
-  side: z.enum(["support", "oppose"], "Side must be either 'support' or 'oppose'"),
-  content: z.string().min(1, "Content cannot be empty"),
+  body: z.object({
+    debate: z.string().min(1, 'Debate ID is required'),
+    content: z.string().min(1, 'Content cannot be empty'),
+  }),
+});
+
+const updateArgumentZodValidation = z.object({
+  body: z.object({
+    content: z.string().min(1, 'Updated content is required'),
+  }),
 });
 
 export const argumentValidationSchema = {
   createArgumentZodValidation,
+  updateArgumentZodValidation,
 };
