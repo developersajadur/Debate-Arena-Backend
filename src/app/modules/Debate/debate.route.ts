@@ -22,4 +22,10 @@ router.post(
   debateController.joinDebate
 );
 
+router.get(
+  '/',
+  // auth(USER_ROLE.USER),
+  debateController.getAllDebatesByQuery
+);
+
 export const debateRoutes = router;

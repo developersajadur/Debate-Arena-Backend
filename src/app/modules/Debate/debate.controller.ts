@@ -38,7 +38,20 @@ const joinDebate = catchAsync(
   },
 );
 
+const getAllDebatesByQuery = catchAsync(async (req, res) => {
+  const result = await debateService.getAllDebatesByQuery(req.query);
+
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'Debates fetched successfully',
+    data: result.data,
+    meta: result.meta,
+  });
+});
+
 export const debateController = {
   createDebate,
   joinDebate,
+  getAllDebatesByQuery
 };

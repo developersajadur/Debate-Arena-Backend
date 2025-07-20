@@ -1,7 +1,6 @@
-import { Types } from "mongoose";
+import { Types } from 'mongoose';
 
-export type TDebateStatus = "open" | "closed";
-
+export type TDebateStatus = 'open' | 'closed';
 
 export interface IDebate {
   _id: Types.ObjectId;
@@ -10,10 +9,11 @@ export interface IDebate {
   tags: string[];
   category: string;
   bannerUrl?: string;
-  duration: number;  // duration in hours
+  duration: number; // duration in hours
   createdBy: Types.ObjectId;
   status: TDebateStatus;
-  endsAt?: Date;
+  endsAt: Date;
+  winner: 'support' | 'oppose' | null;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;

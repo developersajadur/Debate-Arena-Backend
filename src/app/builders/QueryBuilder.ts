@@ -12,9 +12,10 @@ class QueryBuilder<T> {
   search(searchableFields: string[]) {
     const searchTerm = this.query.search as string;
     if (searchTerm) {
-      const searchConditions = searchableFields.map((field) => ({
+      const searchConditions = searchableFields.map(field => ({
         [field]: { $regex: searchTerm, $options: 'i' },
       }));
+
       this.modelQuery = this.modelQuery.find({
         $or: searchConditions,
       } as FilterQuery<T>);
@@ -25,23 +26,23 @@ class QueryBuilder<T> {
   filter() {
     const queryCopy = { ...this.query };
     const excludeFields = ['search', 'sort', 'limit', 'page', 'fields'];
-    excludeFields.forEach((field) => delete queryCopy[field]);
+    excludeFields.forEach(field => delete queryCopy[field]);
 
-    // Price filtering
-    if ('minPrice' in queryCopy || 'maxPrice' in queryCopy) {
-      const priceQuery: Record<string, number> = {};
+    // Price/Duration filter logic example
+    if ('minDuration' in queryCopy || 'maxDuration' in queryCopy) {
+      const durationQuery: Record<string, number> = {};
 
-      if (queryCopy.minPrice) {
-        priceQuery.$gte = Number(queryCopy.minPrice);
-        delete queryCopy.minPrice;
+      if (queryCopy.minDuration) {
+        durationQuery.$gte = Number(queryCopy.minDuration);
+        delete queryCopy.minDuration;
       }
 
-      if (queryCopy.maxPrice) {
-        priceQuery.$lte = Number(queryCopy.maxPrice);
-        delete queryCopy.maxPrice;
+      if (queryCopy.maxDuration) {
+        durationQuery.$lte = Number(queryCopy.maxDuration);
+        delete queryCopy.maxDuration;
       }
 
-      queryCopy['price'] = priceQuery;
+      queryCopy['duration'] = durationQuery;
     }
 
     this.modelQuery = this.modelQuery.find(queryCopy as FilterQuery<T>);
@@ -49,8 +50,16 @@ class QueryBuilder<T> {
   }
 
   sort() {
-    const sortBy =
-      (this.query.sort as string)?.split(',').join(' ') || '-createdAt';
+    const sortKey = this.query.sort as string;
+
+    // Named sorting logic
+    const sortMap: Record<string, string> = {
+      mostVoted: '-voteCount',
+      newest: '-createdAt',
+      endingSoon: 'endsAt',
+    };
+
+    const sortBy = sortMap[sortKey] || '-createdAt'; // default to newest
     this.modelQuery = this.modelQuery.sort(sortBy);
     return this;
   }
@@ -72,7 +81,7 @@ class QueryBuilder<T> {
   }
 
   async countTotal() {
-    const filter = this.modelQuery.getFilter(); // Extract applied filter
+    const filter = this.modelQuery.getFilter();
     const total = await this.modelQuery.model.countDocuments(filter);
 
     const page = Number(this.query.page) || 1;

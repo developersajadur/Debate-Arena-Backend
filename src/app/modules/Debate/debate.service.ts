@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DebateModel } from './debate.model';
 import { IDebate } from './debate.interface';
 import AppError from '../../errors/AppError';
 import status from 'http-status';
 import { IParticipant } from '../Participant/participant.interface';
 import { ParticipantModel } from '../Participant/participant.model';
+import QueryBuilder from '../../builders/QueryBuilder';
 
 const createDebate = async (
   payload: IDebate,
@@ -19,6 +21,30 @@ const createDebate = async (
 
   return debate;
 };
+
+
+
+const getAllDebatesByQuery = async (query: Record<string, any>) => {
+  const modelQuery = DebateModel.find();
+
+  const searchableFields = ['title', 'tags', 'category'];
+
+  const debateQueryBuilder = new QueryBuilder<IDebate>(modelQuery, query)
+    .search(searchableFields)
+    .filter()
+    .sort()
+    .fields()
+    .paginate();
+
+  const result = await debateQueryBuilder.modelQuery;
+  const meta = await debateQueryBuilder.countTotal();
+
+  return {
+    meta,
+    data: result,
+  };
+};
+
 
 const joinDebate = async (
   payload: IParticipant,
@@ -52,4 +78,5 @@ const joinDebate = async (
 export const debateService = {
   createDebate,
   joinDebate,
+  getAllDebatesByQuery
 };

@@ -4,11 +4,22 @@ import status from 'http-status';
 import AppError from '../../errors/AppError';
 import { DebateModel } from '../Debate/debate.model';
 import { ParticipantModel } from '../Participant/participant.model';
+import { containsToxicWords } from '../../utils/checkToxicContent';
 
 const createArgument = async (
   payload: IArgument,
   author: string,
 ): Promise<IArgument> => {
+
+
+  const toxicWords = containsToxicWords(payload.content);
+  if (toxicWords.length > 0) {
+    throw new AppError(
+      status.BAD_REQUEST,
+      `Your argument contains inappropriate words: ${toxicWords.join(', ')}`
+    );
+  }
+
   const isDebateExist = await DebateModel.findById(payload.debate);
 
   if (!isDebateExist || isDebateExist.isDeleted) {
